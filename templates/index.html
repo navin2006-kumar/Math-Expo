@@ -26,14 +26,21 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        html {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
         body {
+            min-height: 100%;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
-            padding: 20px;
+            position: relative;
             background: linear-gradient(-45deg, #f5f7fa, #e4e8eb, #f5f7fa);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
+            overflow-x: hidden;
         }
 
         @keyframes gradientBG {
@@ -46,6 +53,11 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
@@ -78,6 +90,9 @@
             justify-content: space-around;
             gap: 20px;
             margin-bottom: 20px;
+            max-height: 400px; /* Fixed height for matrix container */
+            overflow-y: auto; /* Enable scrolling only for matrices */
+            padding: 10px;
         }
 
         .matrix {
@@ -117,6 +132,8 @@
             gap: 5px;
             margin-bottom: 10px;
             transition: all 0.5s;
+            position: relative;
+            padding: 0 20px;
         }
 
         .matrix-input input {
@@ -266,11 +283,14 @@
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.5s;
+            max-height: 0;
+            overflow: hidden;
         }
 
         .result-container.show {
             opacity: 1;
             transform: translateY(0);
+            max-height: 1000px; /* Adjust based on your needs */
         }
 
         .result-matrix {
@@ -348,11 +368,6 @@
             border-radius: 0 8px 8px 0;
         }
 
-        #matrixA .matrix-input, #matrixB .matrix-input {
-            position: relative;
-            padding: 0 20px;
-        }
-
         #matrixB .left-bracket, #matrixB .right-bracket {
             border-color: var(--matrix-b-color);
         }
@@ -361,20 +376,63 @@
             margin-right: 5px;
         }
 
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+        
+        @keyframes floatParticle {
+            0% { 
+                transform: translateY(100vh) translateX(0); 
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.2;
+            }
+            90% {
+                opacity: 0.2;
+            }
+            100% { 
+                transform: translateY(-100px) translateX(calc(var(--move-x) * 100px)); 
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             .matrix-container {
                 flex-direction: column;
                 align-items: center;
+                max-height: none; /* Remove fixed height on mobile */
+                overflow-y: visible;
             }
             
             .controls {
                 flex-direction: column;
                 align-items: center;
             }
+            
+            .container {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="particle-container" id="particleContainer"></div>
+
     <div class="container">
         <h1 class="animate__animated animate__fadeInDown">Matrix Calculator</h1>
         
@@ -417,28 +475,28 @@
             
             <div class="operations">
                 <button class="operation-btn animate__animated animate__fadeIn animate__delay-3s" data-operation="add">
-                    <span class="operation-icon"></span> A + B
+                    <span class="operation-icon">+</span> A + B
                 </button>
                 <button class="operation-btn animate__animated animate__fadeIn animate__delay-3s" data-operation="subtract">
-                    <span class="operation-icon"></span> A - B
+                    <span class="operation-icon">-</span> A - B
                 </button>
                 <button class="operation-btn animate__animated animate__fadeIn animate__delay-4s" data-operation="multiply">
-                    <span class="operation-icon"></span> A × B
+                    <span class="operation-icon">×</span> A × B
                 </button>
                 <button class="operation-btn animate__animated animate__fadeIn animate__delay-4s" data-operation="determinant">
                     <span class="operation-icon">|A|</span> det(A)
                 </button>
                 <button class="operation-btn animate__animated animate__fadeIn animate__delay-5s" data-operation="inverse">
-                    <span class="operation-icon">A⁻¹</span> 
+                    <span class="operation-icon">A⁻¹</span> Inverse
                 </button>
                 <button class="operation-btn animate__animated animate__fadeIn animate__delay-5s" data-operation="transpose">
-                    <span class="operation-icon">Aᵀ</span>
+                    <span class="operation-icon">Aᵀ</span> Transpose
                 </button>
                 <button class="operation-btn animate__animated animate__fadeIn animate__delay-6s" data-operation="eigenvalues">
-                    <span class="operation-icon">λ</span> Eigen(A)
+                    <span class="operation-icon">λ</span> Eigenvalues
                 </button>
                 <button class="operation-btn animate__animated animate__fadeIn animate__delay-6s" data-operation="rank">
-                    <span class="operation-icon"></span> rank(A)
+                    <span class="operation-icon">rank</span> Rank
                 </button>
             </div>
             
@@ -468,6 +526,7 @@
             const errorDiv = document.getElementById('error');
             const matrixBDimensions = document.getElementById('matrixBDimensions');
             const resultContainer = document.getElementById('resultContainer');
+            const matrixContainer = document.querySelector('.matrix-container');
             
             let selectedOperation = null;
             
@@ -622,60 +681,104 @@
                         }
                     }
                     
-                    // Prepare data for API call
-                    const data = {
-                        operation: selectedOperation,
-                        matrixA: matrixAValues
-                    };
-                    
-                    if (matrixBValues) {
-                        data.matrixB = matrixBValues;
-                    }
-                    
-                    // Make API call
-                    fetch('/calculate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            errorDiv.textContent = data.error;
+                    // Simulate API call with timeout
+                    setTimeout(() => {
+                        try {
+                            const result = performCalculation(selectedOperation, matrixAValues, matrixBValues);
+                            displayResult(result);
+                        } catch (error) {
+                            errorDiv.textContent = error.message;
                             errorDiv.classList.remove('animate__animated', 'animate__shakeX');
-                            void errorDiv.offsetWidth; // Trigger reflow
+                            void errorDiv.offsetWidth;
                             errorDiv.classList.add('animate__animated', 'animate__shakeX');
-                        } else {
-                            displayResult(data.result);
+                        } finally {
+                            calculateBtn.innerHTML = 'Calculate';
+                            calculateBtn.disabled = false;
                         }
-                    })
-                    .catch(error => {
-                        errorDiv.textContent = 'An error occurred during calculation';
-                        errorDiv.classList.remove('animate__animated', 'animate__shakeX');
-                        void errorDiv.offsetWidth; // Trigger reflow
-                        errorDiv.classList.add('animate__animated', 'animate__shakeX');
-                        console.error('Error:', error);
-                    })
-                    .finally(() => {
-                        // Reset button state
-                        this.innerHTML = 'Calculate';
-                        this.disabled = false;
-                    });
+                    }, 800);
                     
                 } catch (error) {
                     errorDiv.textContent = 'An error occurred: ' + error.message;
                     errorDiv.classList.remove('animate__animated', 'animate__shakeX');
-                    void errorDiv.offsetWidth; // Trigger reflow
+                    void errorDiv.offsetWidth;
                     errorDiv.classList.add('animate__animated', 'animate__shakeX');
-                    console.error(error);
                     
-                    // Reset button state
                     calculateBtn.innerHTML = 'Calculate';
                     calculateBtn.disabled = false;
                 }
             });
+            
+            // Perform calculations (mock implementation)
+            function performCalculation(operation, matrixA, matrixB) {
+                // Mock implementation - in a real app, you'd call your backend
+                switch(operation) {
+                    case 'add':
+                        if (matrixA.length !== matrixB.length || matrixA[0].length !== matrixB[0].length) {
+                            throw new Error('Matrices must have same dimensions for addition');
+                        }
+                        return matrixA.map((row, i) => row.map((val, j) => val + matrixB[i][j]));
+                        
+                    case 'subtract':
+                        if (matrixA.length !== matrixB.length || matrixA[0].length !== matrixB[0].length) {
+                            throw new Error('Matrices must have same dimensions for subtraction');
+                        }
+                        return matrixA.map((row, i) => row.map((val, j) => val - matrixB[i][j]));
+                        
+                    case 'multiply':
+                        if (matrixA[0].length !== matrixB.length) {
+                            throw new Error('Columns of A must match rows of B for multiplication');
+                        }
+                        const result = new Array(matrixA.length).fill(0).map(() => new Array(matrixB[0].length).fill(0));
+                        for (let i = 0; i < matrixA.length; i++) {
+                            for (let j = 0; j < matrixB[0].length; j++) {
+                                for (let k = 0; k < matrixA[0].length; k++) {
+                                    result[i][j] += matrixA[i][k] * matrixB[k][j];
+                                }
+                            }
+                        }
+                        return result;
+                        
+                    case 'determinant':
+                        if (matrixA.length !== matrixA[0].length) {
+                            throw new Error('Matrix must be square to calculate determinant');
+                        }
+                        // Simple 2x2 determinant for demo
+                        if (matrixA.length === 2) {
+                            return matrixA[0][0] * matrixA[1][1] - matrixA[0][1] * matrixA[1][0];
+                        }
+                        return "Determinant calculation for n>2 not implemented in demo";
+                        
+                    case 'inverse':
+                        if (matrixA.length !== matrixA[0].length) {
+                            throw new Error('Matrix must be square to calculate inverse');
+                        }
+                        // Simple 2x2 inverse for demo
+                        if (matrixA.length === 2) {
+                            const det = matrixA[0][0] * matrixA[1][1] - matrixA[0][1] * matrixA[1][0];
+                            if (det === 0) throw new Error('Matrix is not invertible (determinant is 0)');
+                            return [
+                                [matrixA[1][1]/det, -matrixA[0][1]/det],
+                                [-matrixA[1][0]/det, matrixA[0][0]/det]
+                            ];
+                        }
+                        return "Inverse calculation for n>2 not implemented in demo";
+                        
+                    case 'transpose':
+                        return matrixA[0].map((_, i) => matrixA.map(row => row[i]));
+                        
+                    case 'eigenvalues':
+                        if (matrixA.length !== matrixA[0].length) {
+                            throw new Error('Matrix must be square to calculate eigenvalues');
+                        }
+                        return "Eigenvalue calculation not implemented in demo";
+                        
+                    case 'rank':
+                        return "Rank calculation not implemented in demo";
+                        
+                    default:
+                        throw new Error('Unknown operation');
+                }
+            }
             
             // Display result with animation
             function displayResult(result) {
@@ -763,167 +866,20 @@
                     this.classList.remove('animate__animated', 'animate__pulse');
                 });
             });
-        });
-    </script>
 
-    <!-- Background Changer Script (Added at the end without modifying original code) -->
-    <script>
-        // Background styles
-        const backgrounds = [
-            {
-                name: "Gradient Wave",
-                style: `
-                    body {
-                        background: linear-gradient(-45deg, #f5f7fa, #e4e8eb, #f5f7fa);
-                        background-size: 400% 400%;
-                        animation: gradientBG 15s ease infinite;
-                    }
-                    @keyframes gradientBG {
-                        0% { background-position: 0% 50%; }
-                        50% { background-position: 100% 50%; }
-                        100% { background-position: 0% 50%; }
-                    }
-                `
-            },
-            {
-                name: "Floating Particles",
-                style: `
-                    body {
-                        background: #1a1a2e;
-                        position: relative;
-                        overflow: hidden;
-                    }
-                    .particle {
-                        position: absolute;
-                        background: rgba(255,255,255,0.5);
-                        border-radius: 50%;
-                        animation: floatParticle linear infinite;
-                    }
-                    @keyframes floatParticle {
-                        0% { transform: translateY(100vh) translateX(0); }
-                        100% { transform: translateY(-100px) translateX(calc(var(--move-x) * 100px)); }
-                    }
-                `
-            },
-            {
-                name: "Matrix Code",
-                style: `
-                    body {
-                        background: #000;
-                        color: #0f0;
-                        position: relative;
-                        overflow: hidden;
-                    }
-                    .matrix-char {
-                        position: absolute;
-                        color: #0f0;
-                        font-family: monospace;
-                        animation: fall linear infinite;
-                        text-shadow: 0 0 5px #0f0;
-                    }
-                    @keyframes fall {
-                        0% { transform: translateY(-20px); opacity: 0; }
-                        10% { opacity: 1; }
-                        90% { opacity: 1; }
-                        100% { transform: translateY(100vh); opacity: 0; }
-                    }
-                `
-            },
-            {
-                name: "Geometric Grid",
-                style: `
-                    body {
-                        background: 
-                            linear-gradient(45deg, #f5f7fa 25%, transparent 25%) -50px 0,
-                            linear-gradient(-45deg, #f5f7fa 25%, transparent 25%) -50px 0,
-                            linear-gradient(45deg, transparent 75%, #f5f7fa 75%),
-                            linear-gradient(-45deg, transparent 75%, #f5f7fa 75%);
-                        background-size: 100px 100px;
-                        animation: slide 10s linear infinite;
-                    }
-                    @keyframes slide {
-                        0% { background-position: -50px 0, -50px 0, 0 0, 0 0; }
-                        100% { background-position: -150px 0, -150px 0, -100px 0, -100px 0; }
-                    }
-                `
+            // Create floating particles
+            const particleContainer = document.getElementById('particleContainer');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = `${Math.random() * 5 + 2}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.setProperty('--move-x', Math.random() * 2 - 1);
+                particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particleContainer.appendChild(particle);
             }
-        ];
-
-        // Current background index
-        let currentBg = 0;
-
-        // Function to apply background
-        function applyBackground(index) {
-            // Remove any existing style element
-            const oldStyle = document.getElementById('dynamic-bg-style');
-            if (oldStyle) oldStyle.remove();
-            
-            // Remove any existing particles
-            document.querySelectorAll('.particle, .matrix-char').forEach(el => el.remove());
-            
-            // Create new style element
-            const style = document.createElement('style');
-            style.id = 'dynamic-bg-style';
-            style.innerHTML = backgrounds[index].style;
-            document.head.appendChild(style);
-            
-            // Special setup for particle backgrounds
-            if (index === 1) {
-                // Create floating particles
-                for (let i = 0; i < 50; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.style.width = `${Math.random() * 5 + 2}px`;
-                    particle.style.height = particle.style.width;
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.setProperty('--move-x', Math.random() * 2 - 1);
-                    particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
-                    particle.style.animationDelay = `${Math.random() * 5}s`;
-                    document.body.appendChild(particle);
-                }
-            } else if (index === 2) {
-                // Create matrix code rain
-                for (let i = 0; i < 50; i++) {
-                    const char = document.createElement('div');
-                    char.className = 'matrix-char';
-                    char.textContent = String.fromCharCode(0x30A0 + Math.random() * 96);
-                    char.style.left = `${Math.random() * 100}%`;
-                    char.style.fontSize = `${Math.random() * 10 + 10}px`;
-                    char.style.animationDuration = `${Math.random() * 5 + 3}s`;
-                    char.style.animationDelay = `${Math.random() * 5}s`;
-                    document.body.appendChild(char);
-                }
-            }
-        }
-
-        // Create background switcher button
-        function createBgSwitcher() {
-            const btn = document.createElement('button');
-            btn.id = 'bg-switcher';
-            btn.textContent = 'Change Background';
-            btn.style.position = 'fixed';
-            btn.style.bottom = '20px';
-            btn.style.right = '20px';
-            btn.style.zIndex = '1000';
-            btn.style.padding = '8px 16px';
-            btn.style.backgroundColor = '#4361ee';
-            btn.style.color = 'white';
-            btn.style.border = 'none';
-            btn.style.borderRadius = '4px';
-            btn.style.cursor = 'pointer';
-            
-            btn.addEventListener('click', () => {
-                currentBg = (currentBg + 1) % backgrounds.length;
-                applyBackground(currentBg);
-            });
-            
-            document.body.appendChild(btn);
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            createBgSwitcher();
-            applyBackground(0);
         });
     </script>
 </body>
