@@ -764,164 +764,167 @@
                 });
             });
         });
-        // Add this script at the end of your <body> (before the closing </body> tag)
-    // Background styles
-            const backgrounds = [
-                {
-                    name: "Gradient Wave",
-                    style: `
-                        body {
-                            background: linear-gradient(-45deg, #f5f7fa, #e4e8eb, #f5f7fa);
-                            background-size: 400% 400%;
-                            animation: gradientBG 15s ease infinite;
-                        }
-                        @keyframes gradientBG {
-                            0% { background-position: 0% 50%; }
-                            50% { background-position: 100% 50%; }
-                            100% { background-position: 0% 50%; }
-                        }
-                    `
-                },
-                {
-                    name: "Floating Particles",
-                    style: `
-                        body {
-                            background: #1a1a2e;
-                            position: relative;
-                            overflow: hidden;
-                        }
-                        .particle {
-                            position: absolute;
-                            background: rgba(255,255,255,0.5);
-                            border-radius: 50%;
-                            animation: floatParticle linear infinite;
-                        }
-                        @keyframes floatParticle {
-                            0% { transform: translateY(100vh) translateX(0); }
-                            100% { transform: translateY(-100px) translateX(calc(var(--move-x) * 100px)); }
-                        }
-                    `
-                },
-                {
-                    name: "Matrix Code",
-                    style: `
-                        body {
-                            background: #000;
-                            color: #0f0;
-                            position: relative;
-                            overflow: hidden;
-                        }
-                        .matrix-char {
-                            position: absolute;
-                            color: #0f0;
-                            font-family: monospace;
-                            animation: fall linear infinite;
-                            text-shadow: 0 0 5px #0f0;
-                        }
-                        @keyframes fall {
-                            0% { transform: translateY(-20px); opacity: 0; }
-                            10% { opacity: 1; }
-                            90% { opacity: 1; }
-                            100% { transform: translateY(100vh); opacity: 0; }
-                        }
-                    `
-                },
-                {
-                    name: "Geometric Grid",
-                    style: `
-                        body {
-                            background: 
-                                linear-gradient(45deg, #f5f7fa 25%, transparent 25%) -50px 0,
-                                linear-gradient(-45deg, #f5f7fa 25%, transparent 25%) -50px 0,
-                                linear-gradient(45deg, transparent 75%, #f5f7fa 75%),
-                                linear-gradient(-45deg, transparent 75%, #f5f7fa 75%);
-                            background-size: 100px 100px;
-                            animation: slide 10s linear infinite;
-                        }
-                        @keyframes slide {
-                            0% { background-position: -50px 0, -50px 0, 0 0, 0 0; }
-                            100% { background-position: -150px 0, -150px 0, -100px 0, -100px 0; }
-                        }
-                    `
+    </script>
+
+    <!-- Background Changer Script (Added at the end without modifying original code) -->
+    <script>
+        // Background styles
+        const backgrounds = [
+            {
+                name: "Gradient Wave",
+                style: `
+                    body {
+                        background: linear-gradient(-45deg, #f5f7fa, #e4e8eb, #f5f7fa);
+                        background-size: 400% 400%;
+                        animation: gradientBG 15s ease infinite;
+                    }
+                    @keyframes gradientBG {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                    }
+                `
+            },
+            {
+                name: "Floating Particles",
+                style: `
+                    body {
+                        background: #1a1a2e;
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .particle {
+                        position: absolute;
+                        background: rgba(255,255,255,0.5);
+                        border-radius: 50%;
+                        animation: floatParticle linear infinite;
+                    }
+                    @keyframes floatParticle {
+                        0% { transform: translateY(100vh) translateX(0); }
+                        100% { transform: translateY(-100px) translateX(calc(var(--move-x) * 100px)); }
+                    }
+                `
+            },
+            {
+                name: "Matrix Code",
+                style: `
+                    body {
+                        background: #000;
+                        color: #0f0;
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .matrix-char {
+                        position: absolute;
+                        color: #0f0;
+                        font-family: monospace;
+                        animation: fall linear infinite;
+                        text-shadow: 0 0 5px #0f0;
+                    }
+                    @keyframes fall {
+                        0% { transform: translateY(-20px); opacity: 0; }
+                        10% { opacity: 1; }
+                        90% { opacity: 1; }
+                        100% { transform: translateY(100vh); opacity: 0; }
+                    }
+                `
+            },
+            {
+                name: "Geometric Grid",
+                style: `
+                    body {
+                        background: 
+                            linear-gradient(45deg, #f5f7fa 25%, transparent 25%) -50px 0,
+                            linear-gradient(-45deg, #f5f7fa 25%, transparent 25%) -50px 0,
+                            linear-gradient(45deg, transparent 75%, #f5f7fa 75%),
+                            linear-gradient(-45deg, transparent 75%, #f5f7fa 75%);
+                        background-size: 100px 100px;
+                        animation: slide 10s linear infinite;
+                    }
+                    @keyframes slide {
+                        0% { background-position: -50px 0, -50px 0, 0 0, 0 0; }
+                        100% { background-position: -150px 0, -150px 0, -100px 0, -100px 0; }
+                    }
+                `
+            }
+        ];
+
+        // Current background index
+        let currentBg = 0;
+
+        // Function to apply background
+        function applyBackground(index) {
+            // Remove any existing style element
+            const oldStyle = document.getElementById('dynamic-bg-style');
+            if (oldStyle) oldStyle.remove();
+            
+            // Remove any existing particles
+            document.querySelectorAll('.particle, .matrix-char').forEach(el => el.remove());
+            
+            // Create new style element
+            const style = document.createElement('style');
+            style.id = 'dynamic-bg-style';
+            style.innerHTML = backgrounds[index].style;
+            document.head.appendChild(style);
+            
+            // Special setup for particle backgrounds
+            if (index === 1) {
+                // Create floating particles
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.width = `${Math.random() * 5 + 2}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.setProperty('--move-x', Math.random() * 2 - 1);
+                    particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                    particle.style.animationDelay = `${Math.random() * 5}s`;
+                    document.body.appendChild(particle);
                 }
-            ];
-
-            // Current background index
-            let currentBg = 0;
-
-            // Function to apply background
-            function applyBackground(index) {
-                // Remove any existing style element
-                const oldStyle = document.getElementById('dynamic-bg-style');
-                if (oldStyle) oldStyle.remove();
-                
-                // Remove any existing particles
-                document.querySelectorAll('.particle, .matrix-char').forEach(el => el.remove());
-                
-                // Create new style element
-                const style = document.createElement('style');
-                style.id = 'dynamic-bg-style';
-                style.innerHTML = backgrounds[index].style;
-                document.head.appendChild(style);
-                
-                // Special setup for particle backgrounds
-                if (index === 1) {
-                    // Create floating particles
-                    for (let i = 0; i < 50; i++) {
-                        const particle = document.createElement('div');
-                        particle.className = 'particle';
-                        particle.style.width = `${Math.random() * 5 + 2}px`;
-                        particle.style.height = particle.style.width;
-                        particle.style.left = `${Math.random() * 100}%`;
-                        particle.style.setProperty('--move-x', Math.random() * 2 - 1);
-                        particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
-                        particle.style.animationDelay = `${Math.random() * 5}s`;
-                        document.body.appendChild(particle);
-                    }
-                } else if (index === 2) {
-                    // Create matrix code rain
-                    for (let i = 0; i < 50; i++) {
-                        const char = document.createElement('div');
-                        char.className = 'matrix-char';
-                        char.textContent = String.fromCharCode(0x30A0 + Math.random() * 96);
-                        char.style.left = `${Math.random() * 100}%`;
-                        char.style.fontSize = `${Math.random() * 10 + 10}px`;
-                        char.style.animationDuration = `${Math.random() * 5 + 3}s`;
-                        char.style.animationDelay = `${Math.random() * 5}s`;
-                        document.body.appendChild(char);
-                    }
+            } else if (index === 2) {
+                // Create matrix code rain
+                for (let i = 0; i < 50; i++) {
+                    const char = document.createElement('div');
+                    char.className = 'matrix-char';
+                    char.textContent = String.fromCharCode(0x30A0 + Math.random() * 96);
+                    char.style.left = `${Math.random() * 100}%`;
+                    char.style.fontSize = `${Math.random() * 10 + 10}px`;
+                    char.style.animationDuration = `${Math.random() * 5 + 3}s`;
+                    char.style.animationDelay = `${Math.random() * 5}s`;
+                    document.body.appendChild(char);
                 }
             }
+        }
 
-            // Create background switcher button
-            function createBgSwitcher() {
-                const btn = document.createElement('button');
-                btn.id = 'bg-switcher';
-                btn.textContent = 'Change Background';
-                btn.style.position = 'fixed';
-                btn.style.bottom = '20px';
-                btn.style.right = '20px';
-                btn.style.zIndex = '1000';
-                btn.style.padding = '8px 16px';
-                btn.style.backgroundColor = '#4361ee';
-                btn.style.color = 'white';
-                btn.style.border = 'none';
-                btn.style.borderRadius = '4px';
-                btn.style.cursor = 'pointer';
-                
-                btn.addEventListener('click', () => {
-                    currentBg = (currentBg + 1) % backgrounds.length;
-                    applyBackground(currentBg);
-                });
-                
-                document.body.appendChild(btn);
-            }
-
-            // Initialize
-            document.addEventListener('DOMContentLoaded', () => {
-                createBgSwitcher();
-                applyBackground(0);
+        // Create background switcher button
+        function createBgSwitcher() {
+            const btn = document.createElement('button');
+            btn.id = 'bg-switcher';
+            btn.textContent = 'Change Background';
+            btn.style.position = 'fixed';
+            btn.style.bottom = '20px';
+            btn.style.right = '20px';
+            btn.style.zIndex = '1000';
+            btn.style.padding = '8px 16px';
+            btn.style.backgroundColor = '#4361ee';
+            btn.style.color = 'white';
+            btn.style.border = 'none';
+            btn.style.borderRadius = '4px';
+            btn.style.cursor = 'pointer';
+            
+            btn.addEventListener('click', () => {
+                currentBg = (currentBg + 1) % backgrounds.length;
+                applyBackground(currentBg);
             });
+            
+            document.body.appendChild(btn);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createBgSwitcher();
+            applyBackground(0);
+        });
     </script>
 </body>
 </html>
