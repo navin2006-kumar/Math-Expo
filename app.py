@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
+from groq import Groq
+import os
+from dotenv import load_dotenv
+import logging
 
 app = Flask(__name__)
 #welcome page
@@ -146,6 +150,65 @@ def g_calculate():
 @app.route('/algebra')
 def algebra():
     return render_template('algebra.html') 
+
+
+#bot
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+
+load_dotenv()
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+@app.route('/bot')
+def bot():
+    return render_template("bot.html")
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    app.logger.info("Chat request received")
+    
+    user_message = request.json.get('message', "").strip()
+    app.logger.info(f"User message: {user_message}")
+    
+    if not user_message:
+        return jsonify({"error": "Message cannot be empty"}), 400
+    
+    try:
+        system_prompt = """You are a math professor. Format responses with:
+
+1. Explanations in clear paragraphs
+2. All formulas should use standard LaTeX notation
+3. Use $$ ... $$ for displayed equations
+4. Use $ ... $ for inline equations
+5. Example of a displayed equation:
+   $$\\displaystyle \\int x^n dx = \\frac{x^{n+1}}{n+1} + C$$
+6. Always use \\displaystyle in displayed equations for better readability
+"""
+        app.logger.info("Sending request to Groq API")
+        response = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            model="llama3-70b-8192",
+            temperature=0.3
+        )
+        
+        # Get the response content
+        api_response = response.choices[0].message.content
+        app.logger.info(f"Response received from API, length: {len(api_response)}")
+        
+        return jsonify({
+            "response": api_response,
+            "is_math": True
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error processing chat request: {str(e)}")
+        return jsonify({"error": "Failed to process your request. Please try again later."}), 500
+
+
+
 
 
 

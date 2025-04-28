@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Professor Chat</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            },
+            options: {
+                enableMenu: false
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+
+        :root {
+            --primary-color: #3a86ff;
+            --primary-hover: #4a94ff;
+            --text-light: #e2e8f0;
+            --text-dark: #94a3b8;
+            --bg-dark:rgba(15, 23, 42, 0.8);
+            --bg-card:rgba(30, 41, 59, 0.8);
+            --bg-input:rgba(51, 65, 85, 0.8);
+            --bg-user-message: #3a86ff;
+            --bg-bot-message:rgba(30, 41, 59, 0.8);
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            background-color: transparent; 
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 400px;
+            height: 100%;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: var(--bg-dark);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            border-radius: 3px;
+        }
+
+        .chat-container {
+            height: calc(100% - 120px); /* Adjust based on your header and input heights */
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .user-message, .bot-message {
+            padding: 12px 18px;
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            max-width: 85%;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .user-message {
+            background-color: var(--bg-user-message);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background-color: var(--bg-bot-message);
+            color: var(--text-light);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .welcome-message p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            margin-top: auto;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            background-color: var(--bg-input);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        #user-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
+        }
+
+        #user-input::placeholder {
+            color: var(--text-dark);
+        }
+
+        #send-button {
+            padding: 0 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+
+        #send-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Scrollbar styles */
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+
+        .input-container {
+            position: sticky;
+            bottom: 0;
+            background-color: var(--bg-dark);
+            padding: 10px 0;
+            margin-top: auto;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            background-color: var(--bg-bot-message);
+            padding: 12px 18px;
+            border-radius: var(--border-radius);
+            border-bottom-left-radius: 4px;
+            display: inline-block;
+            margin-bottom: 16px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .typing-indicator span {
+            height: 10px;
+            width: 10px;
+            float: left;
+            margin: 0 3px;
+            background-color: var(--text-dark);
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .typing-indicator span:nth-of-type(1) {
+            animation: typing 1s infinite;
+        }
+
+        .typing-indicator span:nth-of-type(2) {
+            animation: typing 1s 0.33s infinite;
+        }
+
+        .typing-indicator span:nth-of-type(3) {
+            animation: typing 1s 0.66s infinite;
+        }
+
+        @keyframes typing {
+            0% {
+                transform: translateY(0px);
+                background-color: var(--text-dark);
+            }
+            25% {
+                transform: translateY(-5px);
+                background-color: var(--primary-color);
+            }
+            50% {
+                transform: translateY(0px);
+                background-color: var(--text-dark);
+            }
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+
+        /* Light theme styles */
+        body.light {
+            --bg-dark: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
+            --text-light: #1e293b;
+            --text-dark: #64748b;
+            --bg-bot-message: #f1f5f9;
+        }
+
+        body.light .user-message {
+            --bg-user-message: #3a86ff;
+            color: white;
+        }
+
+        body.light .bot-message {
+            border-color: #e2e8f0;
+        }
+
+        /* LaTeX styles */
+        .math-inline {
+            padding: 0 3px;
+        }
+
+        /* These styles specifically target MathJax rendered content */
+        .MathJax {
+            overflow-x: auto !important;
+            max-width: 100% !important;
+            margin: 5px 0 !important;
+        }
+
+        /* SVG styles for math */
+        svg.MathJax_SVG {
+            display: inline-block;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 420px) {
+            .container {
+                width: 100vw;
+                height: 100vh;
+                padding: 10px;
+            }
+            
+            .chat-container {
+                height: calc(100vh - 120px);
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+        
+    </style>
+</head>
+<body class="dark">
+    <div class="container">
+        <h1>Math Professor Chat</h1>
+        <div class="chat-container" id="chat-container">
+            <div class="welcome-message">
+                <p>Welcome to Math Professor Chat! Ask any mathematics question, and I'll help explain the concepts with detailed formulas.</p>
+            </div>
+            <!-- Chat messages will appear here -->
+        </div>
+        
+        <form id="message-form">
+            <div class="input-container">
+                <input type="text" id="user-input" placeholder="Ask a math question...">
+                <button type="submit" id="send-button">
+                    Send
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM fully loaded");
+            
+            // Get DOM elements
+            const chatContainer = document.getElementById('chat-container');
+            const messageForm = document.getElementById('message-form');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            
+            // Log elements to verify they're being found
+            console.log("Chat container:", chatContainer);
+            console.log("Message form:", messageForm);
+            console.log("User input:", userInput);
+            console.log("Send button:", sendButton);
+            
+            // Function to display messages
+            function displayMessage(messageText, isUser) {
+                console.log(`Displaying ${isUser ? 'user' : 'bot'} message`);
+                
+                // Create the message element
+                const messageDiv = document.createElement('div');
+                messageDiv.className = isUser ? 'user-message' : 'bot-message';
+                messageDiv.innerHTML = messageText;
+                
+                // Add message to chat container
+                chatContainer.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // Process math formulas if it's a bot message
+                if (!isUser && window.MathJax) {
+                    console.log("Running MathJax typeset");
+                    setTimeout(() => {
+                        MathJax.typeset([messageDiv]);
+                    }, 200);
+                }
+            }
+            
+            // Show typing indicator
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.id = 'typing-indicator';
+                typingDiv.innerHTML = '<span></span><span></span><span></span>';
+                chatContainer.appendChild(typingDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                console.log("Typing indicator shown");
+            }
+            
+            // Hide typing indicator
+            function hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                    console.log("Typing indicator removed");
+                }
+            }
+            
+            // Handle form submission
+            messageForm.addEventListener('submit', async (e) => {
+                console.log("Form submitted");
+                e.preventDefault();
+                
+                const message = userInput.value.trim();
+                if (!message) return;
+                
+                // Display user message
+                displayMessage(message, true);
+                
+                // Clear input
+                userInput.value = '';
+                userInput.focus();
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                try {
+                    console.log("Sending request to /chat endpoint");
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message }),
+                    });
+                    
+                    console.log("Response received:", response.status);
+                    const data = await response.json();
+                    console.log("Response data:", data);
+                    
+                    // Hide typing indicator
+                    hideTypingIndicator();
+                    
+                    if (data.error) {
+                        console.error("API error:", data.error);
+                        displayMessage(`Error: ${data.error}`, false);
+                    } else if (data.response) {
+                        console.log("Displaying bot response");
+                        displayMessage(data.response, false);
+                    } else {
+                        console.error("Empty response from API");
+                        displayMessage("Sorry, I couldn't generate a response.", false);
+                    }
+                    
+                } catch (error) {
+                    console.error("Fetch error:", error);
+                    hideTypingIndicator();
+                    displayMessage('Sorry, there was an error processing your request.', false);
+                }
+            });
+            
+            // Add theme toggle functionality
+            function setupThemeToggle() {
+                const container = document.querySelector('.container');
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'theme-toggle';
+                toggleBtn.innerHTML = '☀️';
+                toggleBtn.title = 'Toggle light/dark mode';
+                container.appendChild(toggleBtn);
+                
+                // Check for saved theme preference
+                const currentTheme = localStorage.getItem('mathProfTheme') || 'dark';
+                document.body.className = currentTheme;
+                toggleBtn.innerHTML = currentTheme === 'dark' ? '☀️' : '🌙';
+                
+                toggleBtn.addEventListener('click', () => {
+                    // Toggle theme
+                    const newTheme = document.body.className === 'dark' ? 'light' : 'dark';
+                    document.body.className = newTheme;
+                    localStorage.setItem('mathProfTheme', newTheme);
+                    toggleBtn.innerHTML = newTheme === 'dark' ? '☀️' : '🌙';
+                });
+            }
+            
+            // Initialize theme toggle
+            setupThemeToggle();
+            
+            // Add welcome message animation
+            function addWelcomeAnimation() {
+                const welcomeMsg = document.querySelector('.welcome-message');
+                if (welcomeMsg) {
+                    setTimeout(() => {
+                        welcomeMsg.style.opacity = '1';
+                    }, 300);
+                }
+            }
+            
+            // Initialize welcome animation
+            addWelcomeAnimation();
+            
+            // Focus on input field when the page loads
+            setTimeout(() => {
+                userInput.focus();
+            }, 800);
+            
+            // Add right-side positioning
+            function positionChatOnRight() {
+                const container = document.querySelector('.container');
+                container.style.maxWidth = '400px';
+                container.style.margin = '20px 20px 20px auto';
+                container.style.position = 'fixed';
+                container.style.right = '0';
+                container.style.top = '0';
+                container.style.bottom = '0';
+                container.style.height = '100vh';
+                container.style.boxShadow = '-5px 0 15px rgba(0, 0, 0, 0.2)';
+                container.style.borderLeft = '1px solid rgba(255, 255, 255, 0.1)';
+                container.style.zIndex = '1000';
+                
+                // Adjust chat container height
+                chatContainer.style.height = 'calc(100vh - 180px)';
+            }
+            
+            // Position chat on right side
+            positionChatOnRight();
+            
+            // Optional: Add a minimize/maximize button for the chat
+            function setupChatToggle() {
+                const container = document.querySelector('.container');
+                
+                // Create toggle button
+                const toggleBtn = document.createElement('button');
+                toggleBtn.style.position = 'absolute';
+                toggleBtn.style.top = '20px';
+                toggleBtn.style.left = '-50px';
+                toggleBtn.style.backgroundColor = 'var(--primary-color)';
+                toggleBtn.style.color = 'white';
+                toggleBtn.style.border = 'none';
+                toggleBtn.style.borderRadius = '50%';
+                toggleBtn.style.width = '40px';
+                toggleBtn.style.height = '40px';
+                toggleBtn.style.display = 'flex';
+                toggleBtn.style.alignItems = 'center';
+                toggleBtn.style.justifyContent = 'center';
+                toggleBtn.style.cursor = 'pointer';
+                toggleBtn.style.boxShadow = 'var(--shadow)';
+                toggleBtn.style.fontSize = '18px';
+                toggleBtn.style.zIndex = '999';
+                toggleBtn.innerHTML = '←';
+                toggleBtn.title = 'Minimize/Maximize chat';
+                
+                document.body.appendChild(toggleBtn);
+                
+                // Add collapsed class to container if needed
+                container.classList.add('chat-container-right');
+                
+                // Add click handler
+                toggleBtn.addEventListener('click', () => {
+                    if (container.style.transform === 'translateX(100%)') {
+                        container.style.transform = 'translateX(0)';
+                        toggleBtn.innerHTML = '←';
+                    } else {
+                        container.style.transform = 'translateX(100%)';
+                        toggleBtn.innerHTML = '→';
+                    }
+                });
+            }
+            
+            // Add chat toggle
+            setupChatToggle();
+            
+            // Log when loading is complete
+            console.log("Script initialization complete");
+        });
+        // Add this to your bot.html to enforce size:
+       
+    </script>
+</body>
+</html>
