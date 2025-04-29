@@ -51,22 +51,20 @@
         body {
             background-color: transparent; 
             color: var(--text-light);
-            min-height: 100vh;
+            height: 100%;
+            width: 100%;
             display: flex;
             flex-direction: column;
         }
 
         .container {
-            width: 400px;
+            width: 100%;
             height: 100%;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            position: relative;
             background-color: var(--bg-dark);
-            z-index: 1000;
-            backdrop-filter: blur(10px);
             overflow: hidden;
         }
 
@@ -75,7 +73,7 @@
             margin-bottom: 20px;
             color: var(--text-light);
             font-weight: 700;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             position: relative;
             padding-bottom: 12px;
@@ -87,25 +85,28 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 80px;
             height: 3px;
             background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
             border-radius: 3px;
         }
 
         .chat-container {
-            height: calc(100% - 120px); /* Adjust based on your header and input heights */
+            flex: 1;
             overflow-y: auto;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            max-height: calc(100vh - 180px);
         }
+        
         .user-message, .bot-message {
-            padding: 12px 18px;
+            padding: 10px 15px;
             border-radius: var(--border-radius);
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             max-width: 85%;
             word-wrap: break-word;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             position: relative;
+            font-size: 0.9rem;
         }
 
         .user-message {
@@ -126,8 +127,8 @@
         .welcome-message {
             text-align: center;
             color: var(--text-dark);
-            margin-bottom: 30px;
-            padding: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
             border-radius: var(--border-radius);
             background-color: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -136,23 +137,23 @@
         }
 
         .welcome-message p {
-            font-size: 1.1rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
         .input-container {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             position: relative;
             margin-top: auto;
         }
 
         #user-input {
             flex-grow: 1;
-            padding: 16px 20px;
+            padding: 12px 16px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--border-radius);
-            font-size: 16px;
+            font-size: 14px;
             background-color: var(--bg-input);
             color: var(--text-light);
             transition: all 0.3s ease;
@@ -170,13 +171,13 @@
         }
 
         #send-button {
-            padding: 0 24px;
+            padding: 0 20px;
             background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             transition: all 0.3s ease;
             display: flex;
@@ -191,7 +192,7 @@
 
         /* Scrollbar styles */
         .chat-container::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         .chat-container::-webkit-scrollbar-track {
@@ -203,14 +204,6 @@
             border-radius: 20px;
         }
 
-        .input-container {
-            position: sticky;
-            bottom: 0;
-            background-color: var(--bg-dark);
-            padding: 10px 0;
-            margin-top: auto;
-        }
-
         .chat-container::-webkit-scrollbar-thumb:hover {
             background-color: rgba(255, 255, 255, 0.3);
         }
@@ -218,20 +211,20 @@
         /* Typing indicator */
         .typing-indicator {
             background-color: var(--bg-bot-message);
-            padding: 12px 18px;
+            padding: 10px 15px;
             border-radius: var(--border-radius);
             border-bottom-left-radius: 4px;
             display: inline-block;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.07);
         }
 
         .typing-indicator span {
-            height: 10px;
-            width: 10px;
+            height: 8px;
+            width: 8px;
             float: left;
-            margin: 0 3px;
+            margin: 0 2px;
             background-color: var(--text-dark);
             display: block;
             border-radius: 50%;
@@ -256,7 +249,7 @@
                 background-color: var(--text-dark);
             }
             25% {
-                transform: translateY(-5px);
+                transform: translateY(-4px);
                 background-color: var(--primary-color);
             }
             50% {
@@ -273,7 +266,7 @@
             background: transparent;
             border: none;
             color: var(--text-light);
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: transform 0.3s ease;
         }
@@ -303,14 +296,14 @@
 
         /* LaTeX styles */
         .math-inline {
-            padding: 0 3px;
+            padding: 0 2px;
         }
 
         /* These styles specifically target MathJax rendered content */
         .MathJax {
             overflow-x: auto !important;
             max-width: 100% !important;
-            margin: 5px 0 !important;
+            margin: 3px 0 !important;
         }
 
         /* SVG styles for math */
@@ -319,24 +312,6 @@
             max-width: 100% !important;
             overflow-x: auto !important;
         }
-
-        /* Media queries for responsive design */
-        @media (max-width: 420px) {
-            .container {
-                width: 100vw;
-                height: 100vh;
-                padding: 10px;
-            }
-            
-            .chat-container {
-                height: calc(100vh - 120px);
-            }
-            
-            h1 {
-                font-size: 1.3rem;
-            }
-        }
-        
     </style>
 </head>
 <body class="dark">
@@ -361,24 +336,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOM fully loaded");
-            
             // Get DOM elements
             const chatContainer = document.getElementById('chat-container');
             const messageForm = document.getElementById('message-form');
             const userInput = document.getElementById('user-input');
             const sendButton = document.getElementById('send-button');
             
-            // Log elements to verify they're being found
-            console.log("Chat container:", chatContainer);
-            console.log("Message form:", messageForm);
-            console.log("User input:", userInput);
-            console.log("Send button:", sendButton);
-            
             // Function to display messages
             function displayMessage(messageText, isUser) {
-                console.log(`Displaying ${isUser ? 'user' : 'bot'} message`);
-                
                 // Create the message element
                 const messageDiv = document.createElement('div');
                 messageDiv.className = isUser ? 'user-message' : 'bot-message';
@@ -392,7 +357,6 @@
                 
                 // Process math formulas if it's a bot message
                 if (!isUser && window.MathJax) {
-                    console.log("Running MathJax typeset");
                     setTimeout(() => {
                         MathJax.typeset([messageDiv]);
                     }, 200);
@@ -407,7 +371,6 @@
                 typingDiv.innerHTML = '<span></span><span></span><span></span>';
                 chatContainer.appendChild(typingDiv);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
-                console.log("Typing indicator shown");
             }
             
             // Hide typing indicator
@@ -415,13 +378,11 @@
                 const typingIndicator = document.getElementById('typing-indicator');
                 if (typingIndicator) {
                     typingIndicator.remove();
-                    console.log("Typing indicator removed");
                 }
             }
             
             // Handle form submission
             messageForm.addEventListener('submit', async (e) => {
-                console.log("Form submitted");
                 e.preventDefault();
                 
                 const message = userInput.value.trim();
@@ -438,7 +399,6 @@
                 showTypingIndicator();
                 
                 try {
-                    console.log("Sending request to /chat endpoint");
                     const response = await fetch('/chat', {
                         method: 'POST',
                         headers: {
@@ -447,26 +407,20 @@
                         body: JSON.stringify({ message }),
                     });
                     
-                    console.log("Response received:", response.status);
                     const data = await response.json();
-                    console.log("Response data:", data);
                     
                     // Hide typing indicator
                     hideTypingIndicator();
                     
                     if (data.error) {
-                        console.error("API error:", data.error);
                         displayMessage(`Error: ${data.error}`, false);
                     } else if (data.response) {
-                        console.log("Displaying bot response");
                         displayMessage(data.response, false);
                     } else {
-                        console.error("Empty response from API");
                         displayMessage("Sorry, I couldn't generate a response.", false);
                     }
                     
                 } catch (error) {
-                    console.error("Fetch error:", error);
                     hideTypingIndicator();
                     displayMessage('Sorry, there was an error processing your request.', false);
                 }
@@ -515,78 +469,7 @@
             setTimeout(() => {
                 userInput.focus();
             }, 800);
-            
-            // Add right-side positioning
-            function positionChatOnRight() {
-                const container = document.querySelector('.container');
-                container.style.maxWidth = '400px';
-                container.style.margin = '20px 20px 20px auto';
-                container.style.position = 'fixed';
-                container.style.right = '0';
-                container.style.top = '0';
-                container.style.bottom = '0';
-                container.style.height = '100vh';
-                container.style.boxShadow = '-5px 0 15px rgba(0, 0, 0, 0.2)';
-                container.style.borderLeft = '1px solid rgba(255, 255, 255, 0.1)';
-                container.style.zIndex = '1000';
-                
-                // Adjust chat container height
-                chatContainer.style.height = 'calc(100vh - 180px)';
-            }
-            
-            // Position chat on right side
-            positionChatOnRight();
-            
-            // Optional: Add a minimize/maximize button for the chat
-            function setupChatToggle() {
-                const container = document.querySelector('.container');
-                
-                // Create toggle button
-                const toggleBtn = document.createElement('button');
-                toggleBtn.style.position = 'absolute';
-                toggleBtn.style.top = '20px';
-                toggleBtn.style.left = '-50px';
-                toggleBtn.style.backgroundColor = 'var(--primary-color)';
-                toggleBtn.style.color = 'white';
-                toggleBtn.style.border = 'none';
-                toggleBtn.style.borderRadius = '50%';
-                toggleBtn.style.width = '40px';
-                toggleBtn.style.height = '40px';
-                toggleBtn.style.display = 'flex';
-                toggleBtn.style.alignItems = 'center';
-                toggleBtn.style.justifyContent = 'center';
-                toggleBtn.style.cursor = 'pointer';
-                toggleBtn.style.boxShadow = 'var(--shadow)';
-                toggleBtn.style.fontSize = '18px';
-                toggleBtn.style.zIndex = '999';
-                toggleBtn.innerHTML = '←';
-                toggleBtn.title = 'Minimize/Maximize chat';
-                
-                document.body.appendChild(toggleBtn);
-                
-                // Add collapsed class to container if needed
-                container.classList.add('chat-container-right');
-                
-                // Add click handler
-                toggleBtn.addEventListener('click', () => {
-                    if (container.style.transform === 'translateX(100%)') {
-                        container.style.transform = 'translateX(0)';
-                        toggleBtn.innerHTML = '←';
-                    } else {
-                        container.style.transform = 'translateX(100%)';
-                        toggleBtn.innerHTML = '→';
-                    }
-                });
-            }
-            
-            // Add chat toggle
-            setupChatToggle();
-            
-            // Log when loading is complete
-            console.log("Script initialization complete");
         });
-        // Add this to your bot.html to enforce size:
-       
     </script>
 </body>
 </html>

@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | MathXplore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #7c4dff;
+            --primary-light: #b388ff;
+            --primary-dark: #4a00b0;
+            --secondary: #18ffff;
+            --accent: #ff4081;
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --light: #e0e0e0;
+            --gray: #757575;
+            --success: #69f0ae;
+            --border-radius: 16px;
+            --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glow: 0 0 15px rgba(124, 77, 255, 0.5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(124, 77, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(24, 255, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(to bottom, rgba(18, 18, 18, 0.9), rgba(10, 10, 10, 1));
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--darker));
+            color: white;
+            padding: 10rem 0 6rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 4rem;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+            border-bottom: 1px solid rgba(124, 77, 255, 0.2);
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
+                linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            position: relative;
+            display: inline-block;
+            text-shadow: var(--glow);
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(180, 136, 255, 0.5); }
+            100% { text-shadow: 0 0 25px rgba(24, 255, 255, 0.7); }
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6rem;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+            animation: underlineGrow 1s ease-out forwards;
+            box-shadow: 0 0 10px var(--accent);
+        }
+        
+        @keyframes underlineGrow {
+            from { width: 0; opacity: 0; }
+            to { width: 6rem; opacity: 1; }
+        }
+        
+        .header-text {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.25rem;
+            font-weight: 300;
+            opacity: 0.8;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        /* Section Titles */
+        .section-title {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+            text-shadow: var(--glow);
+        }
+        
+        .section-title p {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+        
+        /* Team Section */
+        .team {
+            padding: 8rem 0;
+            position: relative;
+            background: linear-gradient(to bottom, var(--darker), var(--dark));
+        }
+        
+        .team::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, var(--darker), transparent);
+            z-index: 1;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .team-member {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+            transform: translateY(50px);
+            opacity: 0;
+            animation: fadeUp 0.8s forwards;
+            will-change: transform, opacity;
+            border: 1px solid rgba(124, 77, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .team-member:nth-child(1) { animation-delay: 0.1s; }
+        .team-member:nth-child(2) { animation-delay: 0.3s; }
+        .team-member:nth-child(3) { animation-delay: 0.5s; }
+        .team-member:nth-child(4) { animation-delay: 0.7s; }
+        
+        .team-member:hover {
+            transform: translateY(-1rem) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), var(--glow);
+            border-color: rgba(124, 77, 255, 0.3);
+        }
+        
+        .member-image {
+            height: 350px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .member-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.8));
+            z-index: 1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .team-member:hover .member-image::before {
+            opacity: 1;
+        }
+        
+        .member-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+            filter: grayscale(30%) contrast(1.1);
+        }
+        
+        .team-member:hover .member-image img {
+            transform: scale(1.08);
+            filter: grayscale(0%) contrast(1.2);
+        }
+        
+        .member-info {
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .member-info h3 {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+            color: white;
+            transition: var(--transition);
+        }
+        
+        .team-member:hover .member-info h3 {
+            color: var(--primary-light);
+            text-shadow: 0 0 10px rgba(180, 136, 255, 0.5);
+        }
+        
+        .member-info p.position {
+            color: var(--secondary);
+            font-weight: 500;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .member-info p.bio {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .team-member:hover .social-links {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .social-links a {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 5px 20px rgba(124, 77, 255, 0.5);
+            border-color: transparent;
+        }
+        
+        /* Projects Section */
+        .projects {
+            padding: 8rem 0;
+            background: linear-gradient(to bottom, var(--dark), var(--darker));
+            position: relative;
+            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0% 100%);
+            border-top: 1px solid rgba(124, 77, 255, 0.1);
+        }
+        
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .project-card {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            border: 1px solid rgba(124, 77, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, var(--glass), transparent);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-1rem) rotateX(5deg);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), var(--glow);
+            border-color: rgba(124, 77, 255, 0.3);
+        }
+        
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        
+        .project-image {
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .project-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.6));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .project-card:hover .project-image::after {
+            opacity: 1;
+        }
+        
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+            filter: brightness(0.8);
+        }
+        
+        .project-card:hover .project-image img {
+            transform: scale(1.1);
+            filter: brightness(1);
+        }
+        
+        .project-content {
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .project-content h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: white;
+            transition: var(--transition);
+        }
+        
+        .project-card:hover .project-content h3 {
+            color: var(--primary-light);
+            text-shadow: 0 0 10px rgba(180, 136, 255, 0.3);
+        }
+        
+        .project-content p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .project-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .project-link {
+            color: var(--secondary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .project-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+        
+        .project-link:hover {
+            color: var(--primary-light);
+        }
+        
+        .project-link:hover::after {
+            width: 100%;
+        }
+        
+        .project-link i {
+            margin-left: 0.5rem;
+            transition: var(--transition);
+        }
+        
+        .project-link:hover i {
+            transform: translateX(5px);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background: linear-gradient(to bottom, var(--darker), #000);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            position: relative;
+            clip-path: polygon(0 10%, 100% 0, 100% 100%, 0% 100%);
+            border-top: 1px solid rgba(124, 77, 255, 0.1);
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, var(--darker), transparent);
+            z-index: 1;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .footer-logo {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-decoration: none;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: var(--transition);
+            animation: logoFloat 6s ease-in-out infinite;
+            text-shadow: var(--glow);
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            padding: 0.5rem 0;
+            font-weight: 500;
+        }
+        
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+        
+        .social-footer {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .social-footer a {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: var(--transition);
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .social-footer a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .social-footer a:hover {
+            background: var(--primary);
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(124, 77, 255, 0.5);
+            border-color: transparent;
+        }
+        
+        .social-footer a:hover::before {
+            left: 100%;
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            header {
+                padding: 8rem 0 5rem;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+                padding: 6rem 0 4rem;
+            }
+            
+            h1 {
+                font-size: 2.4rem;
+            }
+            
+            .header-text {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .team-grid, .project-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .team-member, .project-card {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .projects {
+                clip-path: polygon(0 2%, 100% 0, 100% 100%, 0% 100%);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 5rem 0 3rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .member-image {
+                height: 280px;
+            }
+            
+            .project-image {
+                height: 180px;
+            }
+            
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js" class="particles"></div>
+    
+    <header class="animate__animated animate__fadeIn">
+        <div class="container">
+            <h1 class="floating">About Our Team</h1>
+            <p class="header-text animate__animated animate__fadeIn animate__delay-1s">We're a passionate group of mathematicians and developers dedicated to creating innovative solutions that make complex mathematics accessible to everyone.</p>
+        </div>
+    </header>
+
+    <section class="team">
+        <div class="container">
+            <div class="section-title animate__animated animate__fadeIn">
+                <h2>Meet Our Team</h2>
+                <p>Our diverse team brings together expertise in mathematics, education, and technology to create exceptional learning experiences.</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="" alt="NAVINKUMAR M">
+                    </div>
+                    <div class="member-info">
+                        <h3>NAVINKUMAR M</h3>
+                        <p class="position">AI & DS - B</p>
+                        <p class="bio"></p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                           
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="" alt="GIRINATH K">
+                    </div>
+                    <div class="member-info">
+                        <h3>GIRINATH K</h3>
+                        <p class="position">AI & DS - A</p>
+                        <p class="bio"></p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="" alt="SUDHARSAN S">
+                    </div>
+                    <div class="member-info">
+                        <h3>SUDHARSAN S</h3>
+                        <p class="position">CSE - B</p>
+                        <p class="bio"></p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="" alt="NATARAJAN P">
+                    </div>
+                    <div class="member-info">
+                        <h3>NATARAJAN P</h3>
+                        <p class="position">AI & DS - B</p>
+                        <p class="bio"></p>
+                        <div class="social-links">
+                            
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="projects">
+        <div class="container">
+            <div class="section-title animate__animated animate__fadeIn">
+                <h2>Our Featured Projects</h2>
+                <p>Explore some of our recent initiatives that are transforming mathematics education.</p>
+            </div>
+
+            <div class="project-grid">
+                <div class="project-card animate__animated animate__fadeInUp">
+                    <div class="project-image">
+                        <img src="" alt="Interactive Matrix Platform">
+                    </div>
+                    <div class="project-content">
+                        <h3>Interactive Matrix Platform</h3>
+                        <p>Basic Matrix Operations,Perform addition, subtraction, and multiplication of matrices with intuitive interface</p>
+                        <div class="project-meta">
+                            <span class="project-date">Launched: Today</span>
+                            <a href="/matrix" class="project-link">View Project <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="project-image">
+                        <img src="" alt="Algebra">
+                    </div>
+                    <div class="project-content">
+                        <h3>Algebra</h3>
+                        <p>Solve systems of linear equations with multiple variables</p>
+                        <div class="project-meta">
+                            <span class="project-date">Launched: Today</span>
+                            <a href="/algebra" class="project-link">View Project <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="project-image">
+                        <img src="" alt="Math AI Tutor">
+                    </div>
+                    <div class="project-content">
+                        <h3>Math AI Tutor</h3>
+                        <p>Artificial intelligence-powered</p>
+                        <div class="project-meta">
+                            <span class="project-date">In Development</span>
+                            <a href="/bot" class="project-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="animate__animated animate__fadeIn">
+        <div class="container">
+            <div class="footer-content">
+                <a href="#" class="footer-logo floating">MathXplore</a>
+                <div class="footer-links">
+                    <a href="/home">Home</a>
+                    <a href="#">About</a>
+                    <a href="/home">Projects</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Careers</a>
+                </div>
+                <div class="social-footer">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                   
+                </div>
+                <p class="copyright">© 2025 MathXplore. </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load particle.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // Initialize particles.js
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#7c4dff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": false
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#7c4dff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    }
+                }
+            });
+
+            // Animate elements when they come into view
+            const animateOnScroll = function() {
+                const elements = document.querySelectorAll('.team-member, .section-title, .project-card');
+                
+                elements.forEach(element => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (elementPosition < windowHeight - 100) {
+                        element.classList.add('animate__animated', 'animate__fadeInUp');
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // Run once on load
+            
+            // Add hover effect to project cards
+            const projectCards = document.querySelectorAll('.project-card');
+            projectCards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const x = e.clientX / window.innerWidth;
+                    const y = e.clientY / window.innerHeight;
+                    card.style.transform = `translateY(-10px) rotateX(${(y - 0.5) * 5}deg) rotateY(${(x - 0.5) * 5}deg)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(-10px) rotateX(5deg)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

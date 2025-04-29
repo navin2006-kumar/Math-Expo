@@ -8,157 +8,471 @@
     <script src="https://cdn.jsdelivr.net/npm/function-plot@1.22.8/dist/function-plot.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.7.0/math.min.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #3f37c9;
+            --accent: #f72585;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #f8f9fa;
+            --light-accent: #e2e3e5;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #ef233c;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.16), 0 4px 6px rgba(0,0,0,0.23);
+            --shadow-lg: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            --glass: rgba(26, 26, 46, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
-
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            padding-top: 80px;
+            line-height: 1.6;
+        }
+        
+        /* Modern Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+        }
+        
+        .navbar-brand::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .navbar-brand:hover::before {
+            opacity: 1;
+        }
+        
+        .home-button {
+            right: 2rem;
+            top: 0.7rem;
+            padding: 0.5rem 3rem ;
+            border-radius: 12px;
+            background: rgba(67, 97, 238, 0.25);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .home-button:hover {
+            background: rgba(67, 97, 238, 0.4);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+            margin-right: 0.75rem;
+            transition: var(--transition);
+        }
+        
+        .logo-text {
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+        
+        .link-icon {
+            font-size: 1.3rem;
+            transition: var(--transition);
+        }
+        
+        .home-button:hover .link-icon {
+            transform: scale(1.2);
+        }
+        
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.6s cubic-bezier(0.83, 0, 0.17, 1);
+        }
+        
+        .navbar-brand:hover .logo-icon {
+            transform: rotate(15deg) scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(67, 97, 238, 0.7));
+        }
+        
+        .navbar-brand:hover .logo-text::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        /* Main Content Styling */
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
         }
-
+        
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
         h1 {
-            color: #2c3e50;
+            color: white;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary-light), var(--success));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(67, 97, 238, 0.3);
         }
-
+        
+        /* Input Section Styling */
         .input-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 5px;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
         }
-
+        
+        .input-section:hover {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
         .function-input {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 1rem;
         }
-
+        
         .function-input label {
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--light-accent);
         }
-
+        
         .function-input input {
             flex: 1;
             min-width: 200px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1rem;
+            transition: var(--transition);
         }
-
+        
+        .function-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.3);
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Button Styling */
         button {
-            padding: 8px 15px;
-            background: #3498db;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
-
+        
         button:hover {
-            background: #2980b9;
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
-
-        .settings {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+        
+        button:active {
+            transform: translateY(1px);
         }
-
-        .range-input {
-            display: grid;
-            grid-template-columns: auto 1fr auto 1fr;
-            gap: 10px;
-            align-items: center;
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
         }
-
-        .range-input input {
-            width: 60px;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        
+        button:hover::after {
+            left: 100%;
         }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        
+        .example-btn {
+            background: var(--success);
         }
-
+        
+        .example-btn:hover {
+            background: #3aa8d8;
+        }
+        
+        /* Graph Container */
         #graph {
             width: 100%;
             height: 500px;
-            border: 1px solid #ddd;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 2rem;
+            background: white;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        }
+        
+        #graph:hover {
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
+        #graph .title {
+            fill: #333  !important;
+        }
+        
+        #graph .x.axis text, 
+        #graph .y.axis text {
+            fill: #666 !important;
+        }
+        
+        #graph .x.axis line, 
+        #graph .y.axis line,
+        #graph .x.axis path, 
+        #graph .y.axis path {
+            stroke: #ddd  !important;
+        }
+        
+        #graph .grid line {
+            stroke: rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        #graph .function-plot path {
+            stroke-width: 2px;
+        }
+        
+        /* Output Section */
+        .output-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .output-section h3 {
+            margin-top: 0;
+            color: var(--light);
+            font-weight: 600;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+        
+        #function-output, #point-output {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            font-family: 'Fira Code', monospace;
+            color: var(--light-accent);
+        }
+        
+        /* Examples Section */
         .examples {
-            margin-top: 20px;
+            margin-top: 2rem;
         }
-
+        
         .examples h3 {
-            margin-bottom: 10px;
+            color: var(--light);
+            font-weight: 600;
+            margin-bottom: 1rem;
         }
-
+        
         .examples ul {
             list-style: none;
             padding: 0;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 0.75rem;
         }
-
-        .example-btn {
-            background: #27ae60;
-        }
-
-        .example-btn:hover {
-            background: #219653;
-        }
-
+        
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .range-input {
-                grid-template-columns: auto 1fr;
+            .container {
+                padding: 1.5rem;
+                margin: 1.5rem;
+            }
+            
+            .function-input {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .navbar {
+                padding: 0 1rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+            
+            .home-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
             }
         }
-
-        /* Output section styles */
-        .output-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 5px;
-        }
-
-        .output-section h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-
-        #function-output, #point-output {
-            margin-top: 10px;
-            padding: 10px;
+        .chatbot-icon {
+            position: fixed;
+            right: 30px;
+            bottom: 30px;
+            width: 64px;
+            height: 64px;
             background: white;
-            border-radius: 4px;
-            border: 1px solid #ddd;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            padding: 0;
+            margin: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 
+                        0 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chatbot-icon:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 
+                        0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .chatbot-icon:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .chatbot-icon img {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+            filter: brightness(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .chatbot-icon:hover img {
+            transform: rotate(5deg);
+            filter: brightness(1);
+        }
+        .chatbot-icon.pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <a href="/home" class="navbar-brand">
+            <span class="logo-icon">🧮</span>
+            <span class="logo-text">Math Solver Pro</span>
+        </a>
+        
+        <a href="/home" class="home-button">
+            <span class="link-icon">🏠</span>
+            <span class="link-text">Home</span>
+        </a>
+    </nav>
+
+    <button class="chatbot-icon" id="chatbotIcon">
+        <img src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-smart-chatbot-cartoon-clipart-png-image_9015126.png" 
+        alt="Modern Chatbot" 
+        width="200" 
+        height="200">
+     
+    </button>
     <div class="container">
         <h1>Mathematics Function Grapher</h1>
         
@@ -376,6 +690,86 @@
                     if (func) plotFunction(func);
                 });
             });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const navbarToggle = document.querySelector('.navbar-toggle');
+            const navbarLinks = document.querySelector('.navbar-links');
+            
+            navbarToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navbarLinks.classList.toggle('active');
+            });
+            
+            // Close mobile menu when clicking on a link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navbarToggle.classList.remove('active');
+                    navbarLinks.classList.remove('active');
+                });
+            });
+            
+        
+            
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY;
+                const navbar = document.querySelector('.navbar');
+                navbar.style.transform = scrollPosition > 10 ? 
+                    `translateY(${Math.min(scrollPosition * 0.1, 10)}px)` : 
+                    'translateY(0)';
+            });
+            
+            // Set active link based on current page
+            const currentPage = window.location.pathname.split('/').pop();
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const x = e.clientX - e.target.getBoundingClientRect().left;
+                    const y = e.clientY - e.target.getBoundingClientRect().top;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple-effect';
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+        document.getElementById('chatbotIcon').addEventListener('click', function() {
+            // Set your desired popup dimensions
+            const width = 400;
+            const height = 600;
+            
+            // Calculate centered position
+            const left = (window.screen.width - width) / 2;
+            const top = (window.screen.height - height) / 2;
+            
+            // Define window features to enforce size
+            const features = `
+                width=${width},
+                height=${height},
+                left=${left},
+                top=${top},
+                resizable=yes,
+                scrollbars=yes,
+                toolbar=no,
+                menubar=no,
+                location=no,
+                status=no
+            `.replace(/\s+/g, '');
+            
+            // Open the popup
+            const chatWindow = window.open('/bot', 'chatWindow', features);
+            
+            // Focus the window if it exists
+            if (chatWindow) {
+                chatWindow.focus();
+            }
         });
     </script>
 </body>

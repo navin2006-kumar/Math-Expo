@@ -207,7 +207,9 @@ def chat():
         app.logger.error(f"Error processing chat request: {str(e)}")
         return jsonify({"error": "Failed to process your request. Please try again later."}), 500
 
-
+@app.route('/nav')
+def nav():
+    return render_template("navbar.html")
 
 
 
