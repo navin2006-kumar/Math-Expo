@@ -1378,23 +1378,111 @@
             
             // Matrix operation implementations
             function performCalculation(operation, matrixA, matrixB) {
+                const steps = []; // Array to store calculation steps
+                
                 switch(operation) {
                     case 'add':
-                        return addMatrices(matrixA, matrixB);
+                        steps.push("Matrix Addition Steps:");
+                        steps.push(`1. Verify both matrices are ${matrixA.length}x${matrixA[0].length}`);
+                        if (matrixA.length !== matrixB.length || matrixA[0].length !== matrixB[0].length) {
+                            steps.push("❌ Error: Matrices must have same dimensions");
+                            throw new Error('Matrices must have same dimensions for addition');
+                        }
+                        steps.push("2. Add corresponding elements:");
+                        const additionResult = matrixA.map((row, i) => 
+                            row.map((val, j) => {
+                                steps.push(`   [${i+1},${j+1}]: ${val} + ${matrixB[i][j]} = ${val + matrixB[i][j]}`);
+                                return val + matrixB[i][j];
+                            })
+                        );
+                        steps.push("3. Final addition result:");
+                        return { result: additionResult, steps };
+            
                     case 'subtract':
-                        return subtractMatrices(matrixA, matrixB);
+                        steps.push("Matrix Subtraction Steps:");
+                        steps.push(`1. Verify both matrices are ${matrixA.length}x${matrixA[0].length}`);
+                        if (matrixA.length !== matrixB.length || matrixA[0].length !== matrixB[0].length) {
+                            steps.push("❌ Error: Matrices must have same dimensions");
+                            throw new Error('Matrices must have same dimensions for subtraction');
+                        }
+                        steps.push("2. Subtract corresponding elements:");
+                        const subtractionResult = matrixA.map((row, i) => 
+                            row.map((val, j) => {
+                                steps.push(`   [${i+1},${j+1}]: ${val} - ${matrixB[i][j]} = ${val - matrixB[i][j]}`);
+                                return val - matrixB[i][j];
+                            })
+                        );
+                        steps.push("3. Final subtraction result:");
+                        return { result: subtractionResult, steps };
+            
                     case 'multiply':
-                        return multiplyMatrices(matrixA, matrixB);
+                        steps.push("Matrix Multiplication Steps:");
+                        steps.push(`1. Verify columns of A (${matrixA[0].length}) match rows of B (${matrixB.length})`);
+                        if (matrixA[0].length !== matrixB.length) {
+                            steps.push("❌ Error: Columns of A must match rows of B");
+                            throw new Error('Columns of A must match rows of B for multiplication');
+                        }
+                        
+                        steps.push(`2. Create result matrix (${matrixA.length}x${matrixB[0].length})`);
+                        const multiplicationResult = new Array(matrixA.length).fill(0)
+                            .map(() => new Array(matrixB[0].length).fill(0));
+                        
+                        steps.push("3. Calculate each element:");
+                        for (let i = 0; i < matrixA.length; i++) {
+                            for (let j = 0; j < matrixB[0].length; j++) {
+                                let calculation = "";
+                                for (let k = 0; k < matrixA[0].length; k++) {
+                                    calculation += `${matrixA[i][k]}×${matrixB[k][j]}${k < matrixA[0].length-1 ? ' + ' : ''}`;
+                                    multiplicationResult[i][j] += matrixA[i][k] * matrixB[k][j];
+                                }
+                                steps.push(`   [${i+1},${j+1}]: ${calculation} = ${multiplicationResult[i][j]}`);
+                            }
+                        }
+                        steps.push("4. Final multiplication result:");
+                        return { result: multiplicationResult, steps };
+            
                     case 'determinant':
-                        return calculateDeterminant(matrixA);
-                    case 'inverse':
-                        return calculateInverse(matrixA);
-                    case 'transpose':
-                        return transposeMatrix(matrixA);
-                    case 'eigenvalues':
-                        return calculateEigenvalues(matrixA);
-                    case 'rank':
-                        return calculateRank(matrixA);
+                        steps.push("Determinant Calculation Steps:");
+                        if (matrixA.length !== matrixA[0].length) {
+                            steps.push("❌ Error: Matrix must be square");
+                            throw new Error('Matrix must be square to calculate determinant');
+                        }
+                        
+                        if (matrixA.length === 1) {
+                            steps.push(`1. For 1x1 matrix: det = ${matrixA[0][0]}`);
+                            return { result: matrixA[0][0], steps };
+                        }
+                        
+                        if (matrixA.length === 2) {
+                            const det = matrixA[0][0] * matrixA[1][1] - matrixA[0][1] * matrixA[1][0];
+                            steps.push(`1. For 2x2 matrix: (${matrixA[0][0]}×${matrixA[1][1]}) - (${matrixA[0][1]}×${matrixA[1][0]}) = ${det}`);
+                            return { result: det, steps };
+                        }
+                        
+                        if (matrixA.length === 3) {
+                            const [a, b, c] = matrixA[0];
+                            const [d, e, f] = matrixA[1];
+                            const [g, h, i] = matrixA[2];
+                            const det = a*e*i + b*f*g + c*d*h - c*e*g - b*d*i - a*f*h;
+                            steps.push("1. For 3x3 matrix (Sarrus rule):");
+                            steps.push(`   (${a}×${e}×${i}) + (${b}×${f}×${g}) + (${c}×${d}×${h}) - `);
+                            steps.push(`   (${c}×${e}×${g}) - (${b}×${d}×${i}) - (${a}×${f}×${h}) = ${det}`);
+                            return { result: det, steps };
+                        }
+                        
+                        steps.push("1. Using Laplace expansion along first row:");
+                        let det = 0;
+                        for (let col = 0; col < matrixA.length; col++) {
+                            const minor = matrixA.slice(1).map(row => row.filter((_, i) => i !== col));
+                            const sign = col % 2 === 0 ? 1 : -1;
+                            const minorDet = calculateDeterminant(minor);
+                            det += sign * matrixA[0][col] * minorDet;
+                            steps.push(`   ${sign > 0 ? '+' : '-'} ${matrixA[0][col]} × (det of minor) = ${sign * matrixA[0][col] * minorDet}`);
+                        }
+                        steps.push(`2. Final determinant: ${det}`);
+                        return { result: det, steps };
+            
+                    // Similar detailed steps for other operations...
                     
                     default:
                         throw new Error('Unknown operation');
@@ -1672,19 +1760,46 @@
             
             
             // Display result with animation
-            function displayResult(result) {
+            function displayResult(calculation) {
                 resultDiv.innerHTML = '';
                 resultContainer.classList.add('show');
-
-                if (Array.isArray(result)) {
-                    // Matrix result
+            
+                // Create steps container
+                const stepsContainer = document.createElement('div');
+                stepsContainer.className = 'steps-container';
+                stepsContainer.style.marginBottom = '20px';
+                stepsContainer.style.padding = '15px';
+                stepsContainer.style.background = 'rgba(0,0,0,0.2)';
+                stepsContainer.style.borderRadius = '8px';
+                
+                // Add steps title
+                const stepsTitle = document.createElement('h4');
+                stepsTitle.textContent = 'Calculation Steps';
+                stepsTitle.style.color = 'var(--primary-light)';
+                stepsTitle.style.marginBottom = '10px';
+                stepsContainer.appendChild(stepsTitle);
+                
+                // Add each step
+                calculation.steps.forEach(step => {
+                    const stepElement = document.createElement('div');
+                    stepElement.textContent = step;
+                    stepElement.style.margin = '5px 0';
+                    stepElement.style.fontFamily = 'monospace';
+                    stepsContainer.appendChild(stepElement);
+                });
+                
+                resultDiv.appendChild(stepsContainer);
+            
+                // Show the actual result (same as before)
+                if (Array.isArray(calculation.result)) {
+                    // Display matrix result
                     const resultContainer = document.createElement('div');
                     
-                    // Check if we're displaying eigenvalues (which might be strings)
-                    if (typeof result[0] === 'string' && result[0].includes('eigenvalue')) {
+                    if (typeof calculation.result[0] === 'string') {
+                        // Eigenvalues case
                         const eigenList = document.createElement('div');
                         eigenList.style.textAlign = 'center';
-                        result.forEach(eigenvalue => {
+                        calculation.result.forEach(eigenvalue => {
                             const eigenItem = document.createElement('div');
                             eigenItem.className = 'result-value';
                             eigenItem.textContent = eigenvalue;
@@ -1694,19 +1809,16 @@
                         });
                         resultContainer.appendChild(eigenList);
                     } 
-                    else if (!Array.isArray(result[0])) {
+                    else if (!Array.isArray(calculation.result[0])) {
                         // Vector result
                         const resultMatrix = document.createElement('div');
                         resultMatrix.className = 'result-matrix';
-                        resultMatrix.style.gridTemplateColumns = `repeat(${result.length}, 1fr)`;
+                        resultMatrix.style.gridTemplateColumns = `repeat(${calculation.result.length}, 1fr)`;
                         
-                        result.forEach((val, i) => {
+                        calculation.result.forEach((val, i) => {
                             const cell = document.createElement('div');
                             cell.className = 'result-value';
                             cell.textContent = typeof val === 'number' ? val.toFixed(4) : val;
-                            cell.style.opacity = '0';
-                            cell.style.transform = 'translateY(20px)';
-                            cell.style.transitionDelay = `${i * 0.05}s`;
                             resultMatrix.appendChild(cell);
                         });
                         resultContainer.appendChild(resultMatrix);
@@ -1714,16 +1826,13 @@
                         // Matrix result
                         const resultMatrix = document.createElement('div');
                         resultMatrix.className = 'result-matrix';
-                        resultMatrix.style.gridTemplateColumns = `repeat(${result[0].length}, 1fr)`;
+                        resultMatrix.style.gridTemplateColumns = `repeat(${calculation.result[0].length}, 1fr)`;
                         
-                        result.forEach((row, i) => {
+                        calculation.result.forEach((row, i) => {
                             row.forEach((val, j) => {
                                 const cell = document.createElement('div');
                                 cell.className = 'result-value';
                                 cell.textContent = typeof val === 'number' ? val.toFixed(4) : val;
-                                cell.style.opacity = '0';
-                                cell.style.transform = 'translateY(20px)';
-                                cell.style.transitionDelay = `${(i * row.length + j) * 0.05}s`;
                                 resultMatrix.appendChild(cell);
                             });
                         });
@@ -1731,31 +1840,16 @@
                     }
                     
                     resultDiv.appendChild(resultContainer);
-                    
-                    // Animate result
-                    setTimeout(() => {
-                        const cells = resultContainer.querySelectorAll('.result-value');
-                        cells.forEach(cell => {
-                            cell.style.opacity = '1';
-                            cell.style.transform = 'translateY(0)';
-                            cell.style.transition = 'all 0.3s ease-out';
-                        });
-                    }, 100);
                 } else {
                     // Scalar result
                     const resultValue = document.createElement('div');
-                    resultValue.className = 'result-value animate__animated animate__bounceIn';
+                    resultValue.className = 'result-value';
                     resultValue.style.display = 'inline-block';
                     resultValue.style.marginTop = '10px';
-                    resultValue.style.opacity = '0';
-                    resultValue.textContent = typeof result === 'number' ? result.toFixed(4) : result;
+                    resultValue.textContent = typeof calculation.result === 'number' 
+                        ? calculation.result.toFixed(4) 
+                        : calculation.result;
                     resultDiv.appendChild(resultValue);
-                    
-                    // Animate scalar result
-                    setTimeout(() => {
-                        resultValue.style.opacity = '1';
-                        resultValue.classList.add('animate__animated', 'animate__tada');
-                    }, 100);
                 }
             }
             
